@@ -24,10 +24,34 @@ namespace net.niceygy.eddatacollector.handlers
                     // Example usage
 
                     // Find existing system
-                    var system = await ctx.Megaships.FindAsync(signal.SignalName);
-                    if (system != null)
+                    var entry = await ctx.Megaships.FindAsync(signal.SignalName);
+                    if (entry != null)
                     {
                         // Update properties
+
+                        switch (megashipCycle)
+                        {
+                            case 1:
+                                entry.SYSTEM1 = systemName;
+                                break;
+                            case 2:
+                                entry.SYSTEM2 = systemName;
+                                break;
+                            case 3:
+                                entry.SYSTEM3 = systemName;
+                                break;
+                            case 4:
+                                entry.SYSTEM4 = systemName;
+                                break;
+                            case 5:
+                                entry.SYSTEM5 = systemName;
+                                break;
+                            case 6:
+                                entry.SYSTEM6 = systemName;
+                                break;
+                            default:
+                                break;
+                        }
                         
                         // Save changes
                         await ctx.SaveChangesAsync();

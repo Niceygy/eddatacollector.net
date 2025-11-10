@@ -4,7 +4,12 @@ namespace net.niceygy.eddatacollector.schemas.FSDJump
     using Newtonsoft.Json;
     using net.niceygy.eddatacollector.schemas.reused;
     // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-    
+
+    public class PowerplayConflictEntry
+    {
+        public decimal ConflictProgress { get; set; }
+        public required string Power { get; set; }
+    }
 
     public class Message
     {
@@ -20,6 +25,19 @@ namespace net.niceygy.eddatacollector.schemas.FSDJump
         public required string SystemGovernment { get; set; }
         public required string SystemSecondEconomy { get; set; }
         public required string SystemSecurity { get; set; }
+        //powerdata
+        public string? ControllingPower { get; set; }
+        [JsonProperty(nameof(Powers))]
+        private List<string>? _powers { get; set; }
+
+        [JsonIgnore]
+        public List<PowersInfo.Power>? Powers
+        {
+            get => _powers?.Select(p => PowersInfo.PowerShortCodes[p]).ToList();
+            set => _powers = value?.Select(p => PowersInfo.PowerShortCodes.FirstOrDefault(x => x.Value == p).Key).ToList();
+        }
+        public string? PowerplayState { get; set; }
+        public List<PowerplayConflictEntry>? PowerplayConflictProgress { get; set; }
         public required string @event { get; set; }
         public bool horizons { get; set; }
         public bool odyssey { get; set; }

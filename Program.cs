@@ -59,12 +59,12 @@ namespace net.niceygy.eddatacollector
                     {
                         case "FSSSignalDiscovered":
                             FSSSignalMessage msg_ = JsonConvert.DeserializeObject<FSSSignalMessage>(result!)!;
-                            _ = Task.Factory.StartNew(() => FSSSignalHandler.Handle(msg_, ""));
+                            _ = Task.Factory.StartNew(() => FSSSignalHandler.Handle(msg_, context));
                             break;
 
                         case "FSDJump":
                             FSDJumpMessage msg = JsonConvert.DeserializeObject<FSDJumpMessage>(result!)!;
-
+                            _ = Task.Factory.StartNew(() => FSDJumpHandler.Handle(msg, context));
                             break;
 
                         default:
