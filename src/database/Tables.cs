@@ -23,7 +23,7 @@ namespace net.niceygy.eddatacollector.database
 
         public EdDbContext(DbContextOptions ctx) : base(ctx)
         {
-            Console.WriteLine("Database opened");
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

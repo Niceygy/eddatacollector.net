@@ -1,16 +1,14 @@
-﻿using NetMQ.Sockets;
-using NetMQ;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.IO.Compression;
 using Microsoft.EntityFrameworkCore;
 
+using Newtonsoft.Json;
+using Serilog;
+using Serilog.Sinks.SystemConsole;
+using NetMQ.Sockets;
+using NetMQ;
 
 using net.niceygy.eddatacollector.constants;
-using net.niceygy.eddatacollector.schemas;
-using Newtonsoft.Json;
 using net.niceygy.eddatacollector.schemas.FSDJump;
 using net.niceygy.eddatacollector.schemas.FSSSignalDiscovered;
 using net.niceygy.eddatacollector.handlers;
@@ -22,6 +20,12 @@ namespace net.niceygy.eddatacollector
     {
         public static async Task Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .CreateLogger();
+
+            Log.Information("Starting");
 
             var optionsBuilder = new DbContextOptionsBuilder<EdDbContext>();
             optionsBuilder.UseMySql(
@@ -29,9 +33,9 @@ namespace net.niceygy.eddatacollector
                 ServerVersion.AutoDetect(Config.GetConnectionString())
             );
 
-            using var context = new EdDbContext(optionsBuilder.Options);
+            // using var context = new EdDbContext(optionsBuilder.Options);
 
-            
+
             var utf8 = new UTF8Encoding();
 
             using var client = new SubscriberSocket();
@@ -42,7 +46,6 @@ namespace net.niceygy.eddatacollector
             {
                 var bytes = client.ReceiveFrameBytes();
                 var uncompressed = DecompressZlib(bytes);
-
                 var result = utf8.GetString(uncompressed);
 
                 if (result == "" | result == null)
@@ -59,12 +62,12 @@ namespace net.niceygy.eddatacollector
                     {
                         case "FSSSignalDiscovered":
                             FSSSignalMessage msg_ = JsonConvert.DeserializeObject<FSSSignalMessage>(result!)!;
-                            _ = Task.Factory.StartNew(() => FSSSignalHandler.Handle(msg_, context));
+                            _ = Task.Factory.StartNew(() => FSSSignalHandler.Handle(msg_, optionsBuilder.Options));
                             break;
 
                         case "FSDJump":
                             FSDJumpMessage msg = JsonConvert.DeserializeObject<FSDJumpMessage>(result!)!;
-                            _ = Task.Factory.StartNew(() => FSDJumpHandler.Handle(msg, context));
+                            _ = Task.Factory.StartNew(() =>  FSDJumpHandler.Handle(msg, optionsBuilder.Options));
                             break;
 
                         default:

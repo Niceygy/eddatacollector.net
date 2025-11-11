@@ -1,25 +1,28 @@
-using System.Data;
-using Microsoft.Data.SqlClient;
 using net.niceygy.eddatacollector.schemas.FSSSignalDiscovered;
-using net.niceygy.eddatacollector;
-using System.IO.Enumeration;
 using net.niceygy.eddatacollector.database;
+using Microsoft.EntityFrameworkCore;
 
 namespace net.niceygy.eddatacollector.handlers
 {
     static class FSSSignalHandler
     {
-        public static async Task Handle(FSSSignalMessage msg, EdDbContext ctx)
+        public static async Task Handle(FSSSignalMessage msg, DbContextOptions options)
         {
+            if (!MessageCheck.IsValid(msg.header))
+            {
+                return;
+            }
             string systemName = msg.message.StarSystem;
 
             int megashipCycle = Cycles.GetMegashipCycle();
+
+            using var ctx = new EdDbContext(options);
 
             foreach (Signal signal in msg.message.signals)
             {
                 if (signal.SignalType == "Megaship")
                 {
-                    Console.WriteLine($"Updating {signal.SignalName} to {systemName} for week {megashipCycle}");
+                    Serilog.Log.Debug($"Updating '{signal.SignalName}' to {systemName} for week {megashipCycle}");
 
                     // Example usage
 
@@ -52,7 +55,7 @@ namespace net.niceygy.eddatacollector.handlers
                             default:
                                 break;
                         }
-                        
+
                         // Save changes
                         await ctx.SaveChangesAsync();
 
