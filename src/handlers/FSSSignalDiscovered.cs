@@ -23,9 +23,6 @@ namespace net.niceygy.eddatacollector.handlers
                 if (signal.SignalType == "Megaship")
                 {
                     Serilog.Log.Debug($"Updating '{signal.SignalName}' to {systemName} for week {megashipCycle}");
-
-                    // Example usage
-
                     // Find existing system
                     var entry = await ctx.Megaships.FindAsync(signal.SignalName);
                     if (entry != null)

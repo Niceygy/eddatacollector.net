@@ -12,12 +12,6 @@ namespace net.niceygy.eddatacollector
     }
     public static class EDDN
     {
-        public static async Task<EDStatusReponse> IsEDDNOnline()
-        {
-            HttpClient client = new();
-            var data = await client.GetAsync("https://ed-server-status.orerve.net");
-            EDStatusReponse response = JsonConvert.DeserializeObject<EDStatusReponse>(data.ToString())!;
-            return response;
-        }
+        
     }
 }

@@ -25,49 +25,72 @@ namespace net.niceygy.eddatacollector
                 .WriteTo.Console()
                 .CreateLogger();
 
-            Log.Information("Starting");
+            Log.Information("Starting...");
 
-            var optionsBuilder = new DbContextOptionsBuilder<EdDbContext>();
-            optionsBuilder.UseMySql(
-                Config.GetConnectionString(),
-                ServerVersion.AutoDetect(Config.GetConnectionString())
-            );
-
-            // using var context = new EdDbContext(optionsBuilder.Options);
+            DbContextOptionsBuilder options = Database.CreateOptions();
 
 
+
+            while (true)
+            {
+                if (!await IsEliteOnline())
+                {
+                    Log.Information("Elite offline. Waiting 1 minute");
+                    Thread.Sleep(60000);
+                    //1m   
+                } else
+                {
+                    try
+                    {
+                        Log.Information("Starting main loop");
+                        MainLoop(options);
+                        Thread.Sleep(10 * 1000); 
+                        //10s
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e.Message);
+                    }
+                }
+            }
+
+
+        }
+        
+        public static void MainLoop(DbContextOptionsBuilder options)
+        {
             var utf8 = new UTF8Encoding();
-
             using var client = new SubscriberSocket();
             client.Options.ReceiveHighWatermark = 1000;
             client.Connect(Constants.EDDN_URI);
             client.SubscribeToAnyTopic();
+
+            Log.Debug($"Connected to {Constants.EDDN_URI}");
             while (true)
             {
                 var bytes = client.ReceiveFrameBytes();
                 var uncompressed = DecompressZlib(bytes);
                 var result = utf8.GetString(uncompressed);
 
-                if (result == "" | result == null)
+                if (result == string.Empty | result == null)
                 {
                     break;
                 }
 
                 dynamic message = JsonConvert.DeserializeObject<dynamic>(result!)!;
                 string? eventType = message!["message"]["event"];
-                // Console.WriteLine(eventType);
                 if (eventType != null)
                 {
                     switch (eventType)
                     {
                         case "FSSSignalDiscovered":
                             FSSSignalMessage msg_ = JsonConvert.DeserializeObject<FSSSignalMessage>(result!)!;
-                            _ = Task.Factory.StartNew(() => FSSSignalHandler.Handle(msg_, optionsBuilder.Options));
+                            _ = Task.Factory.StartNew(() => FSSSignalHandler.Handle(msg_, options.Options));
                             break;
 
                         case "FSDJump":
                             FSDJumpMessage msg = JsonConvert.DeserializeObject<FSDJumpMessage>(result!)!;
-                            _ = Task.Factory.StartNew(() =>  FSDJumpHandler.Handle(msg, optionsBuilder.Options));
+                            _ = Task.Factory.StartNew(() => FSDJumpHandler.Handle(msg, options.Options));
                             break;
 
                         default:
@@ -76,6 +99,15 @@ namespace net.niceygy.eddatacollector
                     }
                 }
             }
+        }
+        
+        public static async Task<bool> IsEliteOnline()
+        {
+            HttpClient client = new();
+            var data = await client.GetAsync("https://ed-server-status.orerve.net");
+            EDStatusReponse response = JsonConvert.DeserializeObject<EDStatusReponse>(await data.Content.ReadAsStringAsync()!)!;
+            Log.Debug($"ED Status: {response.status}");
+            return response.status == "Good";
         }
 
         public static byte[] DecompressZlib(byte[] compressed)
