@@ -58,7 +58,7 @@ namespace net.niceygy.eddatacollector.handlers
 
             if (!res)
             {
-                Log.Debug($"System rejected. Coords of {StarPos[0]}/{StarPos[1]}/{StarPos[2]} (x/y/z)");
+                Log.Verbose($"System rejected. Coords of {StarPos[0]}/{StarPos[1]}/{StarPos[2]} (x/y/z)");
             }
 
             return res;

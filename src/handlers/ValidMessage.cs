@@ -1,22 +1,36 @@
 namespace net.niceygy.eddatacollector.handlers
 {
-    using Semver;
     using Serilog;
     using net.niceygy.eddatacollector.schemas.reused;
     static class MessageCheck
     {
-        public static readonly string MIN_GAME_VERSION = "4.2.2.0";
-        private static readonly Version GAME_VER = new(MIN_GAME_VERSION);
-        // public static readonly SemVersion MIN_ACCEPTED_VERSION = SemVersion.Parse(MIN_GAME_VERSION);
-        public static readonly string[] ACCEPTED_SENDERS = [
+        /// <summary>
+        /// Oldest release that the program will accept
+        /// </summary>
+        private static readonly Version MINIMUM_GAME_VERSION = new("4.2.2.0");
+
+        /// <summary>
+        /// Latest game version that has appeared in EDDN messages.
+        /// </summary>
+        private static Version LATEST_SEEN_VERSION = MINIMUM_GAME_VERSION;
+
+        /// <summary>
+        /// Known well-behaved senders
+        /// </summary>
+        private static readonly string[] ACCEPTED_SENDERS = [
             "EDDiscovery",
             "E:D Market Connector [Windows]",
             "E:D Market Connector [Linux]",
             "EDO Materials Helper",
-            "EDDLite"
+            "EDDLite",
+            "EDDI"
         ];
 
-        public static readonly string[] REJECTED_NAMES = [
+        /// <summary>
+        /// Known things that interfere with the code, 
+        /// so are rejected
+        /// </summary>
+        private static readonly string[] REJECTED_NAMES = [
             "System Colonisation Ship",
             "Stronghold Carrier",
             "OnFootSettlement",
@@ -31,6 +45,12 @@ namespace net.niceygy.eddatacollector.handlers
             "$EXT_PANEL_ColonisationShip:#index=2;",
             "$EXT_PANEL_ColonisationShip:#index=3;",
         ];
+
+        /// <summary>
+        /// Is the message header valid?
+        /// </summary>
+        /// <param name="data">Message Header</param>
+        /// <returns>true if ok, false if not</returns>
         public static bool IsValid(Header data)
         {
             bool result = true;
@@ -44,34 +64,57 @@ namespace net.niceygy.eddatacollector.handlers
             return result;
         }
 
+        /// <summary>
+        /// Is the DateTime within acceptableDelaySeconds of now?
+        /// </summary>
+        /// <param name="time">Time to be checked</param>
+        /// <param name="acceptableDelaySeconds">Seconds of accepted delay</param>
+        /// <returns></returns>
         private static bool IsValidTimeGap(DateTime time, int acceptableDelaySeconds)
         {
             var now = DateTime.Now;
             TimeSpan delay = now - time;
-            Log.Debug($"CheckTimeStamp delay of {delay.TotalSeconds}s was {(acceptableDelaySeconds >= delay.Seconds ? "accepted." : "rejected.")}");
+            Log.Verbose($"CheckTimeStamp delay of {delay.TotalSeconds}s was {(acceptableDelaySeconds >= delay.Seconds ? "accepted." : "rejected.")}");
             return acceptableDelaySeconds >= delay.Seconds;
         }
 
+        /// <summary>
+        /// Is the sender whitelisted?
+        /// </summary>
+        /// <param name="SenderString">Sender's ID string</param>
+        /// <returns></returns>
         private static bool IsValidCheckSender(string SenderString)
         {
             bool res = ACCEPTED_SENDERS.Contains(SenderString);
-            Log.Debug($"CheckSender {(res ? "accepted" : "rejected")} '{SenderString}'");
+            Log.Verbose($"CheckSender {(res ? "accepted" : "rejected")} '{SenderString}'");
             return res;
         }
 
-        private static bool CheckName(string SenderString)
+        public static bool IsNameBlocked(string SenderString)
         {
             return !REJECTED_NAMES.Contains(SenderString);
         }
 
+        /// <summary>
+        /// Is the game version above (or the same as)
+        /// the MINIMUM_GAME_VERSION
+        /// </summary>
+        /// <param name="ver">Version string</param>
+        /// <returns></returns>
         private static bool IsValidGameVersion(string ver)
         {
             try
             {
                 Version incoming = new(ver);
-                Log.Debug($"Version {ver} {(incoming >= GAME_VER ? "accepted" : "rejected")}");
-                return incoming >= GAME_VER;
-            } catch (Exception e)
+                Log.Verbose($"Version {ver} {(incoming >= MINIMUM_GAME_VERSION ? "accepted" : "rejected")}");
+                if (incoming > MINIMUM_GAME_VERSION && incoming > LATEST_SEEN_VERSION)
+                {
+                    Log.Information($"New game version seen: {incoming}");
+                    LATEST_SEEN_VERSION = incoming;
+                }
+                return incoming >= MINIMUM_GAME_VERSION;
+            }
+            catch (Exception e)
             {
                 Log.Error(e.Message);
                 return false;

@@ -5,6 +5,9 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <IsPublishable>true</IsPublishable>
+    <EnableSdkContainerSupport>true</EnableSdkContainerSupport>
+    <InvariantGlobalization>true</InvariantGlobalization >
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,9 +16,11 @@
     <PackageReference Include="NetMQ" Version="4.0.2.2" />
     <PackageReference Include="newtonsoft.json" Version="13.0.4" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
-    <PackageReference Include="Semver" Version="3.0.0" />
     <PackageReference Include="serilog" Version="4.3.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
+
+    <TrimmerRootAssembly Include="Microsoft.EntityFrameworkCore" />
+    <TrimmerRootAssembly Include="newtonsoft.json" />
   </ItemGroup>
 
 </Project>

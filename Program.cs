@@ -13,6 +13,7 @@ using net.niceygy.eddatacollector.schemas.FSDJump;
 using net.niceygy.eddatacollector.schemas.FSSSignalDiscovered;
 using net.niceygy.eddatacollector.handlers;
 using net.niceygy.eddatacollector.database;
+using Serilog.Events;
 
 namespace net.niceygy.eddatacollector
 {
@@ -20,8 +21,18 @@ namespace net.niceygy.eddatacollector
     {
         public static async Task Main(string[] args)
         {
+            var levelSwitch = new Serilog.Core.LoggingLevelSwitch();
+            if (Environment.GetEnvironmentVariable("LOG_LEVEL") == "DEBUG")
+            {
+                levelSwitch.MinimumLevel = LogEventLevel.Debug;    
+            } else
+            {
+                levelSwitch.MinimumLevel = LogEventLevel.Information;
+            }
+            
+            
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
+                .MinimumLevel.ControlledBy(levelSwitch)
                 .WriteTo.Console()
                 .CreateLogger();
 

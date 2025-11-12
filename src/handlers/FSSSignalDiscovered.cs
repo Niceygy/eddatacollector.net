@@ -1,6 +1,7 @@
 using net.niceygy.eddatacollector.schemas.FSSSignalDiscovered;
 using net.niceygy.eddatacollector.database;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace net.niceygy.eddatacollector.handlers
 {
@@ -22,7 +23,11 @@ namespace net.niceygy.eddatacollector.handlers
             {
                 if (signal.SignalType == "Megaship")
                 {
-                    Serilog.Log.Debug($"Updating '{signal.SignalName}' to {systemName} for week {megashipCycle}");
+                    if (MessageCheck.IsNameBlocked(signal.SignalName))
+                    {
+                        continue;
+                    }
+                    Log.Verbose($"Updating '{signal.SignalName}' to {systemName} for week {megashipCycle}");
                     // Find existing system
                     var entry = await ctx.Megaships.FindAsync(signal.SignalName);
                     if (entry != null)
