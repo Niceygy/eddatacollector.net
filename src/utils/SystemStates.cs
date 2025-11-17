@@ -1,14 +1,28 @@
 namespace net.niceygy.eddatacollector
 {
-    /// <summary>
-    /// All powerplay system states
-    /// </summary>
-    public enum SystemState
+
+
+    public static class SystemStates
     {
-        Unoccupied,
-        War,
-        Exploited,
-        Fortified,
-        Stronghold
+        /// <summary>
+        /// All powerplay system states
+        /// </summary>
+        public enum SystemState
+        {
+            Unoccupied,
+            War,
+            Exploited,
+            Fortified,
+            Stronghold
+        }
+
+        public static readonly Dictionary<string, SystemState> ConversionTable = new()
+        {
+            {"Unoccupied", SystemState.Unoccupied},
+            {"War", SystemState.War},
+            {"Exploited", SystemState.Exploited},
+            {"Unoccupied", SystemState.Fortified},
+            {"Stronghold", SystemState.Stronghold}
+        };
     }
 }

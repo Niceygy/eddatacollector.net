@@ -1,3 +1,6 @@
+using System.ComponentModel;
+using System.Reflection;
+
 namespace net.niceygy.eddatacollector
 {
     public static class PowersInfo
@@ -10,30 +13,37 @@ namespace net.niceygy.eddatacollector
             /// <summary>
             /// A. Lavigny-Duval
             /// </summary>
+            [Description("ALD")]
             ALD,
             /// <summary>
             /// Archon Delaine
             /// </summary>
+            [Description("ARD")]
             ARD,
             /// <summary>
             /// Aisling Duval
             /// </summary>
+            [Description("ASD")]
             ASD,
             /// <summary>
             /// Denton Patreus
             /// </summary>
+            [Description("DPT")]
             DPT,
             /// <summary>
             /// Edmund Mahon
             /// </summary>
+            [Description("EMH")]
             EMH,
             /// <summary>
             /// Felicia Winters
             /// </summary>
+            [Description("FLW")]
             FLW,
             /// <summary>
             /// Jerome Archer
             /// </summary>
+            [Description("JRA")]
             JRA,
             /// <summary>
             /// Li Yong-Rui
@@ -57,7 +67,7 @@ namespace net.niceygy.eddatacollector
             ZMT,
         }
 
-        public static  readonly Dictionary<string, Power> PowerShortCodes = new()
+        public static readonly Dictionary<string, Power> PowerShortCodes = new()
         {
             {"A. Lavigny-Duval", Power.ALD },
             {"Archon Delaine", Power.ARD},
@@ -73,5 +83,12 @@ namespace net.niceygy.eddatacollector
             {"Zemina Torval", Power.ZMT},
 
         };
+
+        public static string ToString(this Enum value)
+        {
+            var field = value.GetType().GetField(value.ToString());
+            var attribute = field.GetCustomAttribute<DescriptionAttribute>();
+            return attribute?.Description ?? value.ToString();
+        }
     }
 }

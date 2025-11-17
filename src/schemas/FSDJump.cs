@@ -8,7 +8,15 @@ namespace net.niceygy.eddatacollector.schemas.FSDJump
     public class PowerplayConflictEntry
     {
         public decimal ConflictProgress { get; set; }
-        public required string Power { get; set; }
+        [JsonProperty(nameof(Power))]
+        private string? _power { get; set; }
+
+        [JsonIgnore]
+        public PowersInfo.Power Power
+        {
+            get => PowersInfo.PowerShortCodes[_power!];
+            set => _power = PowersInfo.PowerShortCodes.FirstOrDefault(x => x.Value == value).Key;
+        }
     }
 
     public class Message
@@ -18,7 +26,11 @@ namespace net.niceygy.eddatacollector.schemas.FSDJump
         public required string BodyType { get; set; }
         public BigInteger Population { get; set; }
         public required List<double> StarPos { get; set; }
-        public required string StarSystem { get; set; }
+        public required string StarSystem 
+        { 
+            get => StarSystem;
+            set => value = value.Replace("'", ".");
+        }
         public long SystemAddress { get; set; }
         public required string SystemAllegiance { get; set; }
         public required string SystemEconomy { get; set; }
@@ -26,7 +38,7 @@ namespace net.niceygy.eddatacollector.schemas.FSDJump
         public required string SystemSecondEconomy { get; set; }
         public required string SystemSecurity { get; set; }
         //powerdata
-        public string? ControllingPower { get; set; }
+        public string? ControllingPower { get; set; }   
         [JsonProperty(nameof(Powers))]
         private List<string>? _powers { get; set; }
 
@@ -36,7 +48,18 @@ namespace net.niceygy.eddatacollector.schemas.FSDJump
             get => _powers?.Select(p => PowersInfo.PowerShortCodes[p]).ToList();
             set => _powers = value?.Select(p => PowersInfo.PowerShortCodes.FirstOrDefault(x => x.Value == p).Key).ToList();
         }
-        public string? PowerplayState { get; set; }
+
+
+        [JsonProperty(nameof(PowerplayState))]
+        public required string _PowerPlayState { get; set; }
+        [JsonIgnore]
+        public SystemStates.SystemState PowerplayState
+        {
+            get => SystemStates.ConversionTable.ContainsKey(_PowerPlayState) ? SystemStates.ConversionTable[_PowerPlayState] : SystemStates.SystemState.Unoccupied;
+            set => _PowerPlayState = SystemStates.ConversionTable.FirstOrDefault(x => x.Value == value).Key;
+        }
+
+
         public List<PowerplayConflictEntry>? PowerplayConflictProgress { get; set; }
         public required string @event { get; set; }
         public bool horizons { get; set; }

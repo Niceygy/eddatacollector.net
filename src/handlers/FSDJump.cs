@@ -1,8 +1,8 @@
 using net.niceygy.eddatacollector.database;
 using net.niceygy.eddatacollector.schemas.FSDJump;
-using net.niceygy.eddatacollector.handlers;
 using Serilog;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace net.niceygy.eddatacollector.handlers
 {
@@ -20,13 +20,13 @@ namespace net.niceygy.eddatacollector.handlers
             {
                 return;
             }
-            
+
             using var ctx = new EdDbContext(options);
 
             var entry = await ctx.StarSystems.FindAsync(msg.message.StarSystem.Replace("'", "."));
             if (entry != null)
             {
-                entry.is_anarchy = (msg.message.SystemSecurity == "$GAlAXY_MAP_INFO_state_anarchy;");
+                entry.is_anarchy = msg.message.SystemSecurity == "$GAlAXY_MAP_INFO_state_anarchy;";
                 entry.frequency++;
             }
             else
@@ -47,7 +47,15 @@ namespace net.niceygy.eddatacollector.handlers
             await ctx.SaveChangesAsync();
             return;
         }
+
         
+        
+        /// <summary>
+        /// Are the inputted coords within the BUBBLE_LIMIT_HIGH
+        /// and BUBBLE_LIMIT_LOW?
+        /// </summary>
+        /// <param name="StarPos"></param>
+        /// <returns></returns>
         private static bool SystemWithinRange(List<double> StarPos)
         {
             bool res = true;
