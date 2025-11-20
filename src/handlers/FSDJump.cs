@@ -23,6 +23,8 @@ namespace net.niceygy.eddatacollector.handlers
 
             using var ctx = new EdDbContext(options);
 
+            await PowerDataHandler.UpdatePowerData(msg, ctx);
+
             var entry = await ctx.StarSystems.FindAsync(msg.message.StarSystem.Replace("'", "."));
             if (entry != null)
             {

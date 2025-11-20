@@ -54,7 +54,7 @@ namespace net.niceygy.eddatacollector
                     try
                     {
                         Log.Information("Starting main loop");
-                        MainLoop(options);
+                        await MainLoop(options);
                         Thread.Sleep(10 * 1000); 
                         //10s
                     }
@@ -68,7 +68,7 @@ namespace net.niceygy.eddatacollector
 
         }
         
-        public static void MainLoop(DbContextOptionsBuilder options)
+        public static async Task MainLoop(DbContextOptionsBuilder options)
         {
             var utf8 = new UTF8Encoding();
             using var client = new SubscriberSocket();
@@ -101,7 +101,7 @@ namespace net.niceygy.eddatacollector
 
                         case "FSDJump":
                             FSDJumpMessage msg = JsonConvert.DeserializeObject<FSDJumpMessage>(result!)!;
-                            _ = Task.Factory.StartNew(() => FSDJumpHandler.Handle(msg, options.Options));
+                            /*_ = Task.Factory.StartNew(() => */await FSDJumpHandler.Handle(msg, options.Options)/*)*/;
                             break;
 
                         default:

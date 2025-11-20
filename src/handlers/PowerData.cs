@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using net.niceygy.eddatacollector.database;
 using net.niceygy.eddatacollector.schemas.FSDJump;
 
@@ -11,14 +12,27 @@ namespace net.niceygy.eddatacollector.handlers
         /// a conflict for control of the system.
         /// </summary>
         private const decimal CONFLICT_THRESHOLD = (decimal)0.3;
-        public static async Task UpdatePowerData(FSDJumpMessage msg, DbContextOptions options)
+        public static async Task UpdatePowerData(FSDJumpMessage msg, EdDbContext ctx)
         {
-            using var ctx = new EdDbContext(options);
-
+            if (!HasPowerPresence(msg.message))
+            {
+                return;
+            }
             await UpdateConflictData(msg.message, ctx);
 
             var entry = await ctx.PowerDatas.FindAsync(msg.message.StarSystem.Replace("'", "."));
-            decimal controlPoints = CorrectControlPoints(msg.message.PowerplayConflictProgress![0].ConflictProgress, msg.message.PowerplayState);
+
+            decimal journalControlPoints = 0;
+            try
+            {
+                journalControlPoints = msg.message.PowerplayConflictProgress == null ? (decimal)msg.message.PowerplayStateControlProgress! : msg.message.PowerplayConflictProgress![0].ConflictProgress;
+            }
+            catch (Exception)
+            {//no powers present
+                return;
+            }
+
+            decimal controlPoints = CorrectControlPoints(journalControlPoints, msg.message.PowerplayState);
 
             if (entry != null)
             {
@@ -30,10 +44,10 @@ namespace net.niceygy.eddatacollector.handlers
             {
                 var newEntry = new database.schemas.PowerData
                 {
-                  shortcode = PowersInfo.PowerShortCodes[msg.message.ControllingPower!],
-                  system_name = msg.message.StarSystem.Replace("'", "."),
-                  control_points = (float)controlPoints,
-                  state = msg.message.PowerplayState
+                    shortcode = PowersInfo.PowerShortCodes[msg.message.ControllingPower!],
+                    system_name = msg.message.StarSystem.Replace("'", "."),
+                    control_points = (float)controlPoints,
+                    state = msg.message.PowerplayState
                 };
 
                 await ctx.PowerDatas.AddAsync(newEntry);
@@ -49,7 +63,7 @@ namespace net.niceygy.eddatacollector.handlers
         /// <param name="msg">FSDJump Message</param>
         /// <param name="ctx">Current database context</param>
         /// <returns></returns>
-        public static async Task UpdateConflictData(Message msg, EdDbContext ctx)
+        private static async Task UpdateConflictData(Message msg, EdDbContext ctx)
         {
             if (msg.PowerplayConflictProgress != null && msg.PowerplayConflictProgress.Count >= 2)
             {//any power conflict data is there
@@ -101,7 +115,7 @@ namespace net.niceygy.eddatacollector.handlers
             }
         }
 
-        public static decimal CorrectControlPoints(decimal progress, SystemStates.SystemState state)
+        private static decimal CorrectControlPoints(decimal progress, SystemStates.SystemState state)
         {
             int scale = 0;
             if (progress > 4000)
@@ -116,6 +130,24 @@ namespace net.niceygy.eddatacollector.handlers
                 progress -= 4294967296 / scale;
             }
             return progress;
+        }
+
+        private static bool HasPowerPresence(Message msg)
+        {
+            try
+            {
+                bool result = false;
+
+                result = result || msg.ControllingPower == null;
+
+                result = result || msg.PowerplayConflictProgress == null;
+
+                return result;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

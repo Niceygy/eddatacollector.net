@@ -7,4 +7,15 @@ namespace net.niceygy.eddatacollector.messageFrequency
             
         }
     }
+
+    enum MessageTypes
+    {
+        DOCK,
+        JUMP,
+        OTHER,
+    }
+    class WSMessage
+    {
+        
+    }
 }

@@ -14,17 +14,12 @@ namespace net.niceygy.eddatacollector.database
         .Property(e => e.SomeProperty)
         .HasColumnName("some_column_name");*/
 
-    public class EdDbContext : DbContext
+    public class EdDbContext(DbContextOptions ctx) : DbContext(ctx)
     {
         public DbSet<StarSystem> StarSystems { get; set; }
         public DbSet<Megaship> Megaships { get; set; }
         public DbSet<PowerData> PowerDatas { get; set; }
         public DbSet<Conflict> Conflicts { get; set; }
-
-        public EdDbContext(DbContextOptions ctx) : base(ctx)
-        {
-
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -53,8 +48,8 @@ namespace net.niceygy.eddatacollector.database
 
             //powerdata
             modelBuilder.Entity<PowerData>()
-                .ToTable("powerdata")
-                .HasKey(s => s.system_name);
+                        .ToTable("powerdata")
+                        .HasKey(s => s.system_name);
 
             // modelBuilder.Entity<StarSystem>()
             //     .Property(s => s.system_name)

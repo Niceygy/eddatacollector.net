@@ -28,8 +28,8 @@ namespace net.niceygy.eddatacollector.schemas.FSDJump
         public required List<double> StarPos { get; set; }
         public required string StarSystem 
         { 
-            get => StarSystem;
-            set => value = value.Replace("'", ".");
+            get; // => StarSystem;
+            set; // => value.Replace("'", ".");
         }
         public long SystemAddress { get; set; }
         public required string SystemAllegiance { get; set; }
@@ -48,6 +48,10 @@ namespace net.niceygy.eddatacollector.schemas.FSDJump
             get => _powers?.Select(p => PowersInfo.PowerShortCodes[p]).ToList();
             set => _powers = value?.Select(p => PowersInfo.PowerShortCodes.FirstOrDefault(x => x.Value == p).Key).ToList();
         }
+
+        public float? PowerplayStateControlProgress { get; set; }
+        public float? PowerplayStateReinforcement { get; set; }
+        public float? PowerplayStateUndermining  { get; set; }
 
 
         [JsonProperty(nameof(PowerplayState))]

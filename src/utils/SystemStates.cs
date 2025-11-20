@@ -21,7 +21,7 @@ namespace net.niceygy.eddatacollector
             {"Unoccupied", SystemState.Unoccupied},
             {"War", SystemState.War},
             {"Exploited", SystemState.Exploited},
-            {"Unoccupied", SystemState.Fortified},
+            {"Fortified", SystemState.Fortified},
             {"Stronghold", SystemState.Stronghold}
         };
     }
