@@ -7,7 +7,7 @@ namespace net.niceygy.eddatacollector.handlers
         /// <summary>
         /// Oldest release that the program will accept
         /// </summary>
-        private static readonly Version MINIMUM_GAME_VERSION = new("4.2.2.1");
+        private static readonly Version MINIMUM_GAME_VERSION = new("4.3.0.1");
 
         /// <summary>
         /// Latest game version that has appeared in EDDN messages.

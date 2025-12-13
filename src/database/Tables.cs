@@ -20,12 +20,17 @@ namespace net.niceygy.eddatacollector.database
         public DbSet<Megaship> Megaships { get; set; }
         public DbSet<PowerData> PowerDatas { get; set; }
         public DbSet<Conflict> Conflicts { get; set; }
+        public DbSet<FleetCarrier> FleetCarriers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //star systems
             modelBuilder.Entity<StarSystem>()
                 .ToTable("star_systems")
+                .HasKey(s => s.system_name);
+
+            modelBuilder.Entity<FleetCarrier>()
+                .ToTable("FleetCarriers")
                 .HasKey(s => s.system_name);
 
             //confilcts 
@@ -51,9 +56,9 @@ namespace net.niceygy.eddatacollector.database
                         .ToTable("powerdata")
                         .HasKey(s => s.system_name);
 
-            // modelBuilder.Entity<StarSystem>()
+            // modelBuilder.Entity<FleetCarrier>()
             //     .Property(s => s.system_name)
-            //     .HasColumnName("system_name");
+            //     .HasKey("system_name");
         }
     }
 

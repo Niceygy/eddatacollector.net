@@ -19,6 +19,8 @@ namespace net.niceygy.eddatacollector.handlers
 
             using var ctx = new EdDbContext(options);
 
+            int carriers = 0;
+
             foreach (Signal signal in msg.message.signals)
             {
                 if (signal.SignalType == "Megaship")
@@ -62,8 +64,44 @@ namespace net.niceygy.eddatacollector.handlers
                         await ctx.SaveChangesAsync();
 
                     }
+                    else
+                    {
+                        var newEntry = new database.schemas.Megaship
+                        {
+                            name = signal.SignalName,
+                            SYSTEM1 = "",
+                            SYSTEM2 = "",
+                            SYSTEM3 = "",
+                            SYSTEM4 = "",
+                            SYSTEM5 = "",
+                            SYSTEM6 = "",
+
+                        };
+                        await ctx.Megaships.AddAsync(newEntry);
+                    }
+                }
+                else if (signal.SignalType == "FleetCarrier")
+                {
+                    carriers++;
                 }
             }
+
+            var fcentry = await ctx.FleetCarriers.FindAsync(msg.message.StarSystem.Replace("'", "."));
+            if (fcentry == null)
+            {
+                var newEntry = new database.schemas.FleetCarrier
+                {
+                    system_name = msg.message.StarSystem.Replace("'", "."),
+                    carriers = carriers
+                };
+
+                await ctx.FleetCarriers.AddAsync(newEntry);
+            }
+            else
+            {
+                fcentry.carriers = carriers;
+            }
+            await ctx.SaveChangesAsync();
 
             return;
         }

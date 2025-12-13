@@ -8,8 +8,8 @@ namespace net.niceygy.eddatacollector.handlers
 {
     static class FSDJumpHandler
     {
-        const int BUBBLE_LIMIT_HIGH = 600;
-        const int BUBBLE_LIMIT_LOW = -600;
+        const int BUBBLE_LIMIT_HIGH = 700;
+        const int BUBBLE_LIMIT_LOW = -700;
         public static async Task Handle(FSDJumpMessage msg, DbContextOptions options)
         {
             if (!MessageCheck.IsValid(msg.header))
@@ -50,8 +50,8 @@ namespace net.niceygy.eddatacollector.handlers
             return;
         }
 
-        
-        
+
+
         /// <summary>
         /// Are the inputted coords within the BUBBLE_LIMIT_HIGH
         /// and BUBBLE_LIMIT_LOW?

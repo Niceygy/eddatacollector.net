@@ -25,7 +25,18 @@ namespace net.niceygy.eddatacollector.handlers
             decimal journalControlPoints = 0;
             try
             {
-                journalControlPoints = msg.message.PowerplayConflictProgress == null ? (decimal)msg.message.PowerplayStateControlProgress! : msg.message.PowerplayConflictProgress![0].ConflictProgress;
+                if (msg.message.PowerplayConflictProgress != null/* || msg.message.PowerplayConflictProgress.Count > 1*/)
+                {
+                    journalControlPoints = (decimal)msg.message.PowerplayStateControlProgress!;
+                }
+                else if (msg.message.PowerplayConflictProgress![0] != null)
+                {
+                    journalControlPoints = msg.message.PowerplayConflictProgress![0].ConflictProgress; ;
+                }
+                else
+                {
+                    return;
+                }
             }
             catch (Exception)
             {//no powers present

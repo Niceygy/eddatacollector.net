@@ -8,10 +8,10 @@ namespace net.niceygy.eddatacollector.database.schemas
         /*SystemStates.SystemState*/
         [NotMapped]
         private string? _state { get; set; }
-        public required SystemStates.SystemState state 
-        { 
-            get { return SystemStates.ConversionTable[_state]; } 
-            set { _state = SystemStates.ConversionTable.FirstOrDefault(x => x.Value == value).Key;} 
+        public required SystemStates.SystemState state
+        {
+            get { return _state != null ? SystemStates.ConversionTable[_state] : SystemStates.SystemState.Unoccupied; }
+            set { _state = SystemStates.ConversionTable.FirstOrDefault(x => x.Value == value).Key; }
         }
         //PowersInfo.Power
         public required PowersInfo.Power shortcode { get; set; }

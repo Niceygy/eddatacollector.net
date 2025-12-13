@@ -24,13 +24,14 @@ namespace net.niceygy.eddatacollector
             var levelSwitch = new Serilog.Core.LoggingLevelSwitch();
             if (Environment.GetEnvironmentVariable("LOG_LEVEL") == "DEBUG")
             {
-                levelSwitch.MinimumLevel = LogEventLevel.Debug;    
-            } else
+                levelSwitch.MinimumLevel = LogEventLevel.Debug;
+            }
+            else
             {
                 levelSwitch.MinimumLevel = LogEventLevel.Information;
             }
-            
-            
+
+
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.ControlledBy(levelSwitch)
                 .WriteTo.Console()
@@ -49,13 +50,14 @@ namespace net.niceygy.eddatacollector
                     Log.Information("Elite offline. Waiting 1 minute");
                     Thread.Sleep(60000);
                     //1m   
-                } else
+                }
+                else
                 {
                     try
                     {
                         Log.Information("Starting main loop");
                         await MainLoop(options);
-                        Thread.Sleep(10 * 1000); 
+                        Thread.Sleep(10 * 1000);
                         //10s
                     }
                     catch (Exception e)
@@ -67,7 +69,7 @@ namespace net.niceygy.eddatacollector
 
 
         }
-        
+
         public static async Task MainLoop(DbContextOptionsBuilder options)
         {
             var utf8 = new UTF8Encoding();
@@ -101,7 +103,7 @@ namespace net.niceygy.eddatacollector
 
                         case "FSDJump":
                             FSDJumpMessage msg = JsonConvert.DeserializeObject<FSDJumpMessage>(result!)!;
-                            /*_ = Task.Factory.StartNew(() => */await FSDJumpHandler.Handle(msg, options.Options)/*)*/;
+                            _ = Task.Factory.StartNew(() => FSDJumpHandler.Handle(msg, options.Options));
                             break;
 
                         default:
@@ -111,7 +113,7 @@ namespace net.niceygy.eddatacollector
                 }
             }
         }
-        
+
         public static async Task<bool> IsEliteOnline()
         {
             HttpClient client = new();
