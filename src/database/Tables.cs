@@ -66,6 +66,7 @@ namespace net.niceygy.eddatacollector.database
     {
         public static string GetConnectionString()
         {
+
             return $"Server={Environment.GetEnvironmentVariable("DATABASE_ADDR")};" +
                    "Database=elite;" +
                    $"User={Environment.GetEnvironmentVariable("DATABASE_USER")};" +

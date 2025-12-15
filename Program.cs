@@ -14,6 +14,7 @@ using net.niceygy.eddatacollector.schemas.FSSSignalDiscovered;
 using net.niceygy.eddatacollector.handlers;
 using net.niceygy.eddatacollector.database;
 using Serilog.Events;
+using System.Net.NetworkInformation;
 
 namespace net.niceygy.eddatacollector
 {
@@ -39,10 +40,6 @@ namespace net.niceygy.eddatacollector
 
             Log.Information("Starting...");
 
-            DbContextOptionsBuilder options = Database.CreateOptions();
-
-
-
             while (true)
             {
                 if (!await IsEliteOnline())
@@ -51,10 +48,16 @@ namespace net.niceygy.eddatacollector
                     Thread.Sleep(60000);
                     //1m   
                 }
+                else if (!IsDatabaseReachable())
+                {
+                    Log.Information("Database unreachable, waiting 1 minute");
+                    Thread.Sleep(5 * 1000);
+                }
                 else
                 {
                     try
                     {
+                        DbContextOptionsBuilder options = Database.CreateOptions();
                         Log.Information("Starting main loop");
                         await MainLoop(options);
                         Thread.Sleep(10 * 1000);
@@ -63,11 +66,10 @@ namespace net.niceygy.eddatacollector
                     catch (Exception e)
                     {
                         Log.Error(e.Message);
+                        Thread.Sleep(1000);
                     }
                 }
             }
-
-
         }
 
         public static async Task MainLoop(DbContextOptionsBuilder options)
@@ -121,6 +123,14 @@ namespace net.niceygy.eddatacollector
             EDStatusReponse response = JsonConvert.DeserializeObject<EDStatusReponse>(await data.Content.ReadAsStringAsync()!)!;
             Log.Debug($"ED Status: {response.status}");
             return response.status == "Good";
+        }
+
+        public static bool IsDatabaseReachable()
+        {
+            Ping pingSender = new();
+            PingReply reply = pingSender.Send(Environment.GetEnvironmentVariable("DATABASE_ADDR")!);
+
+            return reply.Status == IPStatus.Success;
         }
 
         public static byte[] DecompressZlib(byte[] compressed)

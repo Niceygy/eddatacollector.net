@@ -86,26 +86,26 @@ namespace net.niceygy.eddatacollector.handlers
                 }
             }
 
-            var fcentry = await ctx.FleetCarriers.FindAsync(msg.message.StarSystem.Replace("'", "."));
-            if (fcentry == null)
+            if (carriers > 0)
             {
-                var newEntry = new database.schemas.FleetCarrier
+                var fcentry = await ctx.FleetCarriers.FindAsync(msg.message.StarSystem.Replace("'", "."));
+                if (fcentry == null)
                 {
-                    system_name = msg.message.StarSystem.Replace("'", "."),
-                    carriers = carriers
-                };
+                    var newEntry = new database.schemas.FleetCarrier
+                    {
+                        system_name = msg.message.StarSystem.Replace("'", "."),
+                        carriers = carriers
+                    };
 
-                await ctx.FleetCarriers.AddAsync(newEntry);
+                    await ctx.FleetCarriers.AddAsync(newEntry);
+                }
+                else
+                {
+                    fcentry.carriers = carriers;
+                }
+                await ctx.SaveChangesAsync();
             }
-            else
-            {
-                fcentry.carriers = carriers;
-            }
-            await ctx.SaveChangesAsync();
-
             return;
         }
-
-
     }
 }

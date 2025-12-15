@@ -11,7 +11,7 @@ docker push ghcr.io/niceygy/eddatacollector.net:latest
 
 #Update local container
 
-cd /opt/stacks/elite_apps
+cd /opt/stacks/elite_db
 
 docker compose pull
 
@@ -19,7 +19,7 @@ docker compose down
 
 docker compose up -d
 
-docker logs eddatacollector.net -f
+docker logs eddn_connector -f
 
 #101357577
 #101357577x
