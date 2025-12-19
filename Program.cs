@@ -40,8 +40,6 @@ namespace net.niceygy.eddatacollector
 
             Log.Information("Starting...");
 
-            EDAM edam = new();
-
             while (true)
             {
                 if (!await IsEliteOnline())
@@ -60,6 +58,7 @@ namespace net.niceygy.eddatacollector
                     try
                     {
                         DbContextOptionsBuilder options = Database.CreateOptions();
+                        EDAM edam = new(options.Options);
                         Log.Information("Starting main loop");
                         await MainLoop(options, edam);
                         Thread.Sleep(10 * 1000);

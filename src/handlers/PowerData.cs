@@ -27,7 +27,7 @@ namespace net.niceygy.eddatacollector.handlers
                 {
                     journalControlPoints = (decimal)msg.message.PowerplayStateControlProgress!;
                 }
-                else if (msg.message.PowerplayConflictProgress![0] != null)
+                else if (msg.message.PowerplayConflictProgress?[0] != null)
                 {
                     journalControlPoints = msg.message.PowerplayConflictProgress![0].ConflictProgress; ;
                 }

@@ -21,6 +21,7 @@ namespace net.niceygy.eddatacollector.database
         public DbSet<PowerData> PowerDatas { get; set; }
         public DbSet<Conflict> Conflicts { get; set; }
         public DbSet<FleetCarrier> FleetCarriers { get; set; }
+        public DbSet<Uploaders> Uploaders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -50,6 +51,10 @@ namespace net.niceygy.eddatacollector.database
             modelBuilder.Entity<Megaship>()
                 .ToTable("megaships")
                 .HasKey(s => s.name);
+
+            modelBuilder.Entity<Uploaders>()
+                .ToTable("EDAM")
+                .HasKey(s => s.timestamp);
 
             //powerdata
             modelBuilder.Entity<PowerData>()
