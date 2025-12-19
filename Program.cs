@@ -9,10 +9,10 @@ using NetMQ.Sockets;
 using NetMQ;
 
 using net.niceygy.eddatacollector.constants;
-using net.niceygy.eddatacollector.schemas.FSDJump;
-using net.niceygy.eddatacollector.schemas.FSSSignalDiscovered;
+using net.niceygy.eddatacollector.schemas;
 using net.niceygy.eddatacollector.handlers;
 using net.niceygy.eddatacollector.database;
+
 using Serilog.Events;
 using System.Net.NetworkInformation;
 
@@ -40,6 +40,8 @@ namespace net.niceygy.eddatacollector
 
             Log.Information("Starting...");
 
+            EDAM edam = new();
+
             while (true)
             {
                 if (!await IsEliteOnline())
@@ -59,7 +61,7 @@ namespace net.niceygy.eddatacollector
                     {
                         DbContextOptionsBuilder options = Database.CreateOptions();
                         Log.Information("Starting main loop");
-                        await MainLoop(options);
+                        await MainLoop(options, edam);
                         Thread.Sleep(10 * 1000);
                         //10s
                     }
@@ -72,7 +74,7 @@ namespace net.niceygy.eddatacollector
             }
         }
 
-        public static async Task MainLoop(DbContextOptionsBuilder options)
+        public static async Task MainLoop(DbContextOptionsBuilder options, EDAM edam)
         {
             var utf8 = new UTF8Encoding();
             using var client = new SubscriberSocket();
@@ -92,8 +94,10 @@ namespace net.niceygy.eddatacollector
                     break;
                 }
 
-                dynamic message = JsonConvert.DeserializeObject<dynamic>(result!)!;
-                string? eventType = message!["message"]["event"];
+                UnknownMessage message = JsonConvert.DeserializeObject<UnknownMessage>(result!)!;
+                string? eventType = message.message["event"];
+                edam.AddUploader(message.header.uploaderID);
+
                 if (eventType != null)
                 {
                     switch (eventType)

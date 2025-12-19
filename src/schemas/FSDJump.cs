@@ -1,4 +1,4 @@
-namespace net.niceygy.eddatacollector.schemas.FSDJump
+namespace net.niceygy.eddatacollector.schemas
 {
     using System.Numerics;
     using Newtonsoft.Json;
@@ -19,15 +19,15 @@ namespace net.niceygy.eddatacollector.schemas.FSDJump
         }
     }
 
-    public class Message
+    public class FSDMessage
     {
         public required string Body { get; set; }
         public int BodyID { get; set; }
         public required string BodyType { get; set; }
         public BigInteger Population { get; set; }
         public required List<double> StarPos { get; set; }
-        public required string StarSystem 
-        { 
+        public required string StarSystem
+        {
             get; // => StarSystem;
             set; // => value.Replace("'", ".");
         }
@@ -38,7 +38,7 @@ namespace net.niceygy.eddatacollector.schemas.FSDJump
         public required string SystemSecondEconomy { get; set; }
         public required string SystemSecurity { get; set; }
         //powerdata
-        public string? ControllingPower { get; set; }   
+        public string? ControllingPower { get; set; }
         [JsonProperty(nameof(Powers))]
         private List<string>? _powers { get; set; }
 
@@ -51,7 +51,7 @@ namespace net.niceygy.eddatacollector.schemas.FSDJump
 
         public float? PowerplayStateControlProgress { get; set; }
         public float? PowerplayStateReinforcement { get; set; }
-        public float? PowerplayStateUndermining  { get; set; }
+        public float? PowerplayStateUndermining { get; set; }
 
 
         [JsonProperty(nameof(PowerplayState))]
@@ -76,7 +76,7 @@ namespace net.niceygy.eddatacollector.schemas.FSDJump
         [JsonProperty("$schemaRef")]
         public required string schemaRef { get; set; }
         public required Header header { get; set; }
-        public required Message message { get; set; }
+        public required FSDMessage message { get; set; }
     }
 
 

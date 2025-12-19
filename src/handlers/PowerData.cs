@@ -1,7 +1,5 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using net.niceygy.eddatacollector.database;
-using net.niceygy.eddatacollector.schemas.FSDJump;
+using net.niceygy.eddatacollector.schemas;
 
 namespace net.niceygy.eddatacollector.handlers
 {
@@ -74,7 +72,7 @@ namespace net.niceygy.eddatacollector.handlers
         /// <param name="msg">FSDJump Message</param>
         /// <param name="ctx">Current database context</param>
         /// <returns></returns>
-        private static async Task UpdateConflictData(Message msg, EdDbContext ctx)
+        private static async Task UpdateConflictData(FSDMessage msg, EdDbContext ctx)
         {
             if (msg.PowerplayConflictProgress != null && msg.PowerplayConflictProgress.Count >= 2)
             {//any power conflict data is there
@@ -143,7 +141,7 @@ namespace net.niceygy.eddatacollector.handlers
             return progress;
         }
 
-        private static bool HasPowerPresence(Message msg)
+        private static bool HasPowerPresence(FSDMessage msg)
         {
             try
             {

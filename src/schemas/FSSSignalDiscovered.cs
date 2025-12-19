@@ -1,11 +1,11 @@
-namespace net.niceygy.eddatacollector.schemas.FSSSignalDiscovered
+namespace net.niceygy.eddatacollector.schemas
 {
     using Newtonsoft.Json;
     using net.niceygy.eddatacollector.schemas.reused;
     // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
 
 
-    public class Message
+    public class FSSMessage
     {
         public required List<double> StarPos { get; set; }
         public required string StarSystem { get; set; }
@@ -22,7 +22,7 @@ namespace net.niceygy.eddatacollector.schemas.FSSSignalDiscovered
         [JsonProperty("$schemaRef")]
         public required string schemaRef { get; set; }
         public required Header header { get; set; }
-        public required Message message { get; set; }
+        public required FSSMessage message { get; set; }
     }
 
     public class Signal

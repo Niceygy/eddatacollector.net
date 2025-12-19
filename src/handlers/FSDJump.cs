@@ -1,8 +1,7 @@
 using net.niceygy.eddatacollector.database;
-using net.niceygy.eddatacollector.schemas.FSDJump;
+using net.niceygy.eddatacollector.schemas;
 using Serilog;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace net.niceygy.eddatacollector.handlers
 {

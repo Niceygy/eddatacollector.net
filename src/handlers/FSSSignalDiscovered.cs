@@ -1,4 +1,4 @@
-using net.niceygy.eddatacollector.schemas.FSSSignalDiscovered;
+using net.niceygy.eddatacollector.schemas;
 using net.niceygy.eddatacollector.database;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
