@@ -1,8 +1,8 @@
-FROM mcr.microsoft.com/dotnet/runtime:9.0 AS base
+FROM mcr.microsoft.com/dotnet/runtime:10.0 AS base
 
 WORKDIR /home
 
-COPY bin/Release/net9.0/linux-arm64/publish .
+COPY bin/Release/net10.0/linux-arm64/publish .
 
 # RUN ls /home && sleep 1000
 # RUN /bin/sh -c ls /home
