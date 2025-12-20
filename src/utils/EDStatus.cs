@@ -10,8 +10,4 @@ namespace net.niceygy.eddatacollector
         public int code;
         public required string product;
     }
-    public static class EDDN
-    {
-        
-    }
 }
