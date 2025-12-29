@@ -35,6 +35,7 @@ namespace net.niceygy.eddatacollector.handlers
                 lock (this.locker)
                 {
                     int uniqueUploaders = this.uploaders.Count;
+                    this.uploaders.Clear();
                     long unixTime = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
                     //save
                     using var ctx = new EdDbContext(options);
@@ -46,6 +47,7 @@ namespace net.niceygy.eddatacollector.handlers
                     };
 
                     ctx.Uploaders.Add(newEntry);
+                    ctx.SaveChanges();
 
                     //ftp
                     CreatePublicCSV(
@@ -62,32 +64,26 @@ namespace net.niceygy.eddatacollector.handlers
 
         private void CreatePublicCSV(string host, string username, string password)
         {
-            const string CSV_FILE_PATH = "/experiments/edam/data.csv";
+            const string CSV_FILE_PATH = "public_html/experiments/edam/data.csv";
             string csv = "";
 
-            using (var context = new EdDbContext(this.options))
-            {
-                var topItems = context.Uploaders
-                    .OrderByDescending(p => p.timestamp)
-                    .Take(24)
-                    .ToList();
+            using var context = new EdDbContext(this.options);
 
-                foreach (var item in topItems)
-                {
-                    csv += $"{item.timestamp},{item.uploaders}\n";
-                }
+            var topItems = context.Uploaders
+                .OrderByDescending(p => p.timestamp)
+                .ToList();
+
+            foreach (var item in topItems)
+            {
+                csv += $"{item.timestamp},{item.uploaders}\n";
             }
 
-            byte[] bytes = Encoding.Unicode.GetBytes(csv);
+
+            byte[] bytes = Encoding.UTF8.GetBytes(csv);
 
 
             using var client = new FtpClient(host, username, password);
             client.AutoConnect();
-            try
-            {
-                client.DeleteFile(CSV_FILE_PATH);
-            }
-            catch (Exception) { }
 
             client.UploadBytes(bytes, CSV_FILE_PATH);
 

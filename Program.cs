@@ -40,7 +40,7 @@ namespace net.niceygy.eddatacollector
 
             Log.Information("Starting...");
 
-            while (true)
+            while (AreEnvVarsOK())
             {
                 if (!await IsEliteOnline())
                 {
@@ -117,6 +117,35 @@ namespace net.niceygy.eddatacollector
                     }
                 }
             }
+        }
+
+        public static bool AreEnvVarsOK()
+        {
+            string[] ENV_VAR_NAMES = [
+                "DATABASE_ADDR",
+                "DATABASE_USER",
+                "DATABASE_PASSWD",
+                "LOG_LEVEL",
+                "FTP_USERNAME",
+                "FTP_PASSWORD",
+                "FTP_HOST"
+            ];
+
+            bool result = true;
+
+            foreach (string envvar in ENV_VAR_NAMES)
+            {
+                bool exists = Environment.GetEnvironmentVariable(envvar) != null;
+                result = result && exists;
+                if (!exists)
+                {
+                    Log.Verbose($"Env Var {envvar} is null!");
+                }
+            }
+
+            if (result) Log.Information("All env vars OK");
+
+            return result;
         }
 
         public static async Task<bool> IsEliteOnline()
