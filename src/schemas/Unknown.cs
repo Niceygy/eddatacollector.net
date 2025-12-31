@@ -11,7 +11,4 @@ namespace net.niceygy.eddatacollector.schemas
         public required Header header { get; set; }
         public required dynamic message { get; set; }
     }
-
-
-
 }

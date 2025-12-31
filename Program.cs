@@ -22,6 +22,7 @@ namespace net.niceygy.eddatacollector
     {
         public static async Task Main(string[] args)
         {
+            int waitsec = 1;
             var levelSwitch = new Serilog.Core.LoggingLevelSwitch();
             if (Environment.GetEnvironmentVariable("LOG_LEVEL") == "DEBUG")
             {
@@ -67,7 +68,8 @@ namespace net.niceygy.eddatacollector
                     catch (Exception e)
                     {
                         Log.Error(e.Message);
-                        Thread.Sleep(1000);
+                        Thread.Sleep(waitsec * 1000);
+                        waitsec++;
                     }
                 }
             }
@@ -86,6 +88,10 @@ namespace net.niceygy.eddatacollector
             {
                 var bytes = client.ReceiveFrameBytes();
                 var uncompressed = DecompressZlib(bytes);
+                if (uncompressed == null)
+                {
+                    break;
+                }
                 var result = utf8.GetString(uncompressed);
 
                 if (result == string.Empty | result == null)

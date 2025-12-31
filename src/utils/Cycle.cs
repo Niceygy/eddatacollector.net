@@ -5,14 +5,6 @@ namespace net.niceygy.eddatacollector
 
         public static int GetCycleNo()
         {
-            /*
-            powerplay_startdate = datetime(2024, 10, 31, 8)
-    now = datetime.now()
-
-    cycle = (now - powerplay_startdate).days / 7
-
-    return math.trunc(cycle)
-            */
             DateTime PowerplayStartDate = new(2024, 10, 31);
             PowerplayStartDate.AddHours(8);
 
@@ -24,7 +16,7 @@ namespace net.niceygy.eddatacollector
 
             return weeks;
         }
-        
+
         public static int GetMegashipCycle()
         {
             int cycle = GetCycleNo();
