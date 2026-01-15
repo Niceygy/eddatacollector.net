@@ -1,7 +1,5 @@
 namespace net.niceygy.eddatacollector
 {
-
-
     public static class SystemStates
     {
         /// <summary>

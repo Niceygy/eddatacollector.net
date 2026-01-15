@@ -28,7 +28,7 @@ namespace net.niceygy.eddatacollector.handlers
             if (entry != null)
             {
                 entry.is_anarchy = msg.message.SystemSecurity == "$GAlAXY_MAP_INFO_state_anarchy;";
-                entry.frequency++;
+                _ = entry.frequency == null ? entry.frequency++ : entry.frequency = 1;
             }
             else
             {

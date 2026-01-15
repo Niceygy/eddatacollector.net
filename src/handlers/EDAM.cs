@@ -8,7 +8,7 @@ namespace net.niceygy.eddatacollector.handlers
 {
     public class EDAM
     {
-        const int INTERVAL = 1000 * 60 * 60;
+        const int INTERVAL = 1000 * 60 * 15;
         private List<string> uploaders;
         private Lock locker;
         private Thread thread;

@@ -165,10 +165,12 @@ namespace net.niceygy.eddatacollector
 
         public static bool IsDatabaseReachable()
         {
-            Ping pingSender = new();
-            PingReply reply = pingSender.Send(Environment.GetEnvironmentVariable("DATABASE_ADDR")!);
+            // Ping pingSender = new();
+            // PingReply reply = pingSender.Send(Environment.GetEnvironmentVariable("DATABASE_ADDR")!);
 
-            return reply.Status == IPStatus.Success;
+            // return reply.Status == IPStatus.Success;
+            Thread.Sleep(1000 * 5);
+            return true;
         }
 
         public static byte[] DecompressZlib(byte[] compressed)
