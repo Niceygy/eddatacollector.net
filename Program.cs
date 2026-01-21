@@ -15,6 +15,7 @@ using net.niceygy.eddatacollector.database;
 
 using Serilog.Events;
 using System.Net.NetworkInformation;
+using Microsoft.IdentityModel.Tokens;
 
 namespace net.niceygy.eddatacollector
 {
@@ -173,8 +174,12 @@ namespace net.niceygy.eddatacollector
             return true;
         }
 
-        public static byte[] DecompressZlib(byte[] compressed)
+        public static byte[]? DecompressZlib(byte[] compressed)
         {
+            if (compressed.IsNullOrEmpty())
+            {
+                return null;
+            }
             using var input = new MemoryStream(compressed);
             using var zlib = new ZLibStream(input, CompressionMode.Decompress);
             using var output = new MemoryStream();

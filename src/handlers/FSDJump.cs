@@ -11,7 +11,7 @@ namespace net.niceygy.eddatacollector.handlers
         const int BUBBLE_LIMIT_LOW = -700;
         public static async Task Handle(FSDJumpMessage msg, DbContextOptions options)
         {
-            if (!MessageCheck.IsValid(msg.header))
+            if (!MessageCheck.IsValid(msg.header, msg.message.timestamp))
             {
                 return;
             }

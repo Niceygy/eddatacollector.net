@@ -50,12 +50,13 @@ namespace net.niceygy.eddatacollector.handlers
         /// Is the message header valid?
         /// </summary>
         /// <param name="data">Message Header</param>
+        /// <param name="messageTimeStamp">Timestamp from message body</param>
         /// <returns>true if ok, false if not</returns>
-        public static bool IsValid(Header data)
+        public static bool IsValid(Header data, DateTime messageTimeStamp)
         {
             bool result = true;
 
-            result = result && IsValidTimeGap(data.gatewayTimestamp, 5 * 60);
+            result = result && IsValidTimeGap(messageTimeStamp, 5 * 60);
 
             result = result && IsValidCheckSender(data.softwareName);
 

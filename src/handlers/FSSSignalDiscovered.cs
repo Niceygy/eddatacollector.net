@@ -9,7 +9,7 @@ namespace net.niceygy.eddatacollector.handlers
     {
         public static async Task Handle(FSSSignalMessage msg, DbContextOptions options)
         {
-            if (!MessageCheck.IsValid(msg.header))
+            if (!MessageCheck.IsValid(msg.header, msg.message.timestamp))
             {
                 return;
             }
