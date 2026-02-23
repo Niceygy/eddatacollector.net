@@ -15,6 +15,7 @@ namespace net.niceygy.eddatacollector.handlers
         private readonly DbContextOptions options;
         public EDAM(DbContextOptions options)
         {
+            return;
             this.locker = new Lock();
             lock (this.locker)
             {

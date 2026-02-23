@@ -10,6 +10,14 @@ namespace net.niceygy.eddatacollector.handlers
         /// a conflict for control of the system.
         /// </summary>
         private const decimal CONFLICT_THRESHOLD = (decimal)0.3;
+
+        /// <summary>
+        /// Updates the powerplay data for
+        /// the given system.
+        /// </summary>
+        /// <param name="msg">FSDJump message</param>
+        /// <param name="ctx">Database context</param>
+        /// <returns></returns>
         public static async Task UpdatePowerData(FSDJumpMessage msg, EdDbContext ctx)
         {
             if (!HasPowerPresence(msg.message))
@@ -124,6 +132,14 @@ namespace net.niceygy.eddatacollector.handlers
             }
         }
 
+        /// <summary>
+        /// Corrects the control points into their
+        /// actual (as shown in-game) values.
+        /// See 
+        /// </summary>
+        /// <param name="progress"></param>
+        /// <param name="state"></param>
+        /// <returns></returns>
         private static decimal CorrectControlPoints(decimal progress, SystemStates.SystemState state)
         {
             int scale = 0;

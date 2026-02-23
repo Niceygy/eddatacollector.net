@@ -9,6 +9,13 @@ namespace net.niceygy.eddatacollector.handlers
     {
         const int BUBBLE_LIMIT_HIGH = 700;
         const int BUBBLE_LIMIT_LOW = -700;
+
+        /// <summary>
+        /// Handles a FSDJump message
+        /// </summary>
+        /// <param name="msg">Message</param>
+        /// <param name="options">Database options</param>
+        /// <returns></returns>
         public static async Task Handle(FSDJumpMessage msg, DbContextOptions options)
         {
             if (!MessageCheck.IsValid(msg.header, msg.message.timestamp))
@@ -19,6 +26,8 @@ namespace net.niceygy.eddatacollector.handlers
             {
                 return;
             }
+
+            // IsEnclaveSystem(msg.message.StarPos, msg.message.StarSystem);
 
             using var ctx = new EdDbContext(options);
 
@@ -71,6 +80,27 @@ namespace net.niceygy.eddatacollector.handlers
             }
 
             return res;
+        }
+
+        /// <summary>
+        /// Is the system in the HIP 87621 enclave?
+        /// </summary>
+        /// <param name="StarPos"></param>
+        /// <param name="SystemName"></param>
+        private static void IsEnclaveSystem(List<double> StarPos, string SystemName)
+        {
+            const int ENCLAVE_RANGE = 40;
+            List<double> HIP_87621_COORDS = [-220.34, 112.13, 328.72];
+
+            if (
+
+                Math.Abs(StarPos[0] - HIP_87621_COORDS[0]) <= ENCLAVE_RANGE &&
+                Math.Abs(StarPos[1] - HIP_87621_COORDS[1]) <= ENCLAVE_RANGE &&
+                Math.Abs(StarPos[2] - HIP_87621_COORDS[2]) <= ENCLAVE_RANGE
+            )
+            {
+                Console.WriteLine($"SYSTEM {SystemName}");
+            }
         }
     }
 }

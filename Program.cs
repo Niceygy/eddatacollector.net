@@ -14,7 +14,6 @@ using net.niceygy.eddatacollector.handlers;
 using net.niceygy.eddatacollector.database;
 
 using Serilog.Events;
-using System.Net.NetworkInformation;
 using Microsoft.IdentityModel.Tokens;
 
 namespace net.niceygy.eddatacollector
@@ -44,10 +43,11 @@ namespace net.niceygy.eddatacollector
 
             while (AreEnvVarsOK())
             {
-                if (!await IsEliteOnline())
+                if (!await EDStatus.IsEliteOnline())
                 {
-                    Log.Information("Elite offline. Waiting 1 minute");
-                    Thread.Sleep(60000);
+                    Log.Information($"Elite offline. Waiting {waitsec} minutes");
+                    Thread.Sleep(waitsec * 1000);
+                    waitsec++;
                     //1m   
                 }
                 else if (!IsDatabaseReachable())
@@ -60,9 +60,8 @@ namespace net.niceygy.eddatacollector
                     try
                     {
                         DbContextOptionsBuilder options = Database.CreateOptions();
-                        EDAM edam = new(options.Options);
                         Log.Information("Starting main loop");
-                        await MainLoop(options, edam);
+                        await MainLoop(options);
                         Thread.Sleep(10 * 1000);
                         //10s
                     }
@@ -76,7 +75,7 @@ namespace net.niceygy.eddatacollector
             }
         }
 
-        public static async Task MainLoop(DbContextOptionsBuilder options, EDAM edam)
+        public static async Task MainLoop(DbContextOptionsBuilder options/*, EDAM edam*/)
         {
             var utf8 = new UTF8Encoding();
             using var client = new SubscriberSocket();
@@ -102,7 +101,7 @@ namespace net.niceygy.eddatacollector
 
                 UnknownMessage message = JsonConvert.DeserializeObject<UnknownMessage>(result!)!;
                 string? eventType = message.message["event"];
-                edam.AddUploader(message.header.uploaderID);
+                // edam.AddUploader(message.header.uploaderID);
 
                 if (eventType != null)
                 {
@@ -126,6 +125,11 @@ namespace net.niceygy.eddatacollector
             }
         }
 
+        /// <summary>
+        /// Checks to see if all env 
+        /// vars are present.
+        /// </summary>
+        /// <returns></returns>
         public static bool AreEnvVarsOK()
         {
             string[] ENV_VAR_NAMES = [
@@ -155,21 +159,10 @@ namespace net.niceygy.eddatacollector
             return result;
         }
 
-        public static async Task<bool> IsEliteOnline()
-        {
-            HttpClient client = new();
-            var data = await client.GetAsync("https://ed-server-status.orerve.net");
-            EDStatusReponse response = JsonConvert.DeserializeObject<EDStatusReponse>(await data.Content.ReadAsStringAsync()!)!;
-            Log.Debug($"ED Status: {response.status}");
-            return response.status == "Good";
-        }
+
 
         public static bool IsDatabaseReachable()
         {
-            // Ping pingSender = new();
-            // PingReply reply = pingSender.Send(Environment.GetEnvironmentVariable("DATABASE_ADDR")!);
-
-            // return reply.Status == IPStatus.Success;
             Thread.Sleep(1000 * 5);
             return true;
         }

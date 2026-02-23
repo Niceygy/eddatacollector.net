@@ -7,6 +7,13 @@ namespace net.niceygy.eddatacollector.handlers
 {
     static class FSSSignalHandler
     {
+        /// <summary>
+        /// Handles FSSSignalDiscovered messages.
+        /// Looking for carriers and megaships
+        /// </summary>
+        /// <param name="msg">Message</param>
+        /// <param name="options">Database options</param>
+        /// <returns></returns>
         public static async Task Handle(FSSSignalMessage msg, DbContextOptions options)
         {
             if (!MessageCheck.IsValid(msg.header, msg.message.timestamp))

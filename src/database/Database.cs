@@ -6,6 +6,7 @@ namespace net.niceygy.eddatacollector.database
     {
         public static DbContextOptionsBuilder CreateOptions()
         {
+            // string test = Config.GetConnectionString();
             // Log.Information($"Connecting to {Config.GetConnectionString()}");
             var optionsBuilder = new DbContextOptionsBuilder<EdDbContext>();
             optionsBuilder.UseMySql(
