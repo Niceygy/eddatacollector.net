@@ -75,7 +75,7 @@ namespace net.niceygy.eddatacollector
             }
         }
 
-        public static async Task MainLoop(DbContextOptionsBuilder options/*, EDAM edam*/)
+        public static async Task MainLoop(DbContextOptionsBuilder options)
         {
             var utf8 = new UTF8Encoding();
             using var client = new SubscriberSocket();
@@ -87,11 +87,23 @@ namespace net.niceygy.eddatacollector
             while (true)
             {
                 var bytes = client.ReceiveFrameBytes();
-                var uncompressed = DecompressZlib(bytes);
+
+                byte[]? uncompressed;
+                try
+                {
+                    uncompressed = DecompressZlib(bytes);
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"Decompression failed: {e.Message}");
+                    continue;  // Skip this message and continue
+                }
+
                 if (uncompressed == null)
                 {
-                    break;
+                    continue;
                 }
+
                 var result = utf8.GetString(uncompressed);
 
                 if (result == string.Empty | result == null)
@@ -101,7 +113,6 @@ namespace net.niceygy.eddatacollector
 
                 UnknownMessage message = JsonConvert.DeserializeObject<UnknownMessage>(result!)!;
                 string? eventType = message.message["event"];
-                // edam.AddUploader(message.header.uploaderID);
 
                 if (eventType != null)
                 {
@@ -150,7 +161,7 @@ namespace net.niceygy.eddatacollector
                 result = result && exists;
                 if (!exists)
                 {
-                    Log.Verbose($"Env Var {envvar} is null!");
+                    Log.Error($"Env Var {envvar} is null!");
                 }
             }
 
