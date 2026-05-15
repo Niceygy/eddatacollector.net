@@ -73,5 +73,7 @@ namespace net.niceygy.eddatacollector.database.schemas
             get => _points_change;
             set => _points_change = (float?)value ?? 0;
         }
+
+        public bool? has_stronghold_carrier;
     }
 }

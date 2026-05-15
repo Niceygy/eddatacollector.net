@@ -90,6 +90,12 @@ namespace net.niceygy.eddatacollector.handlers
                 else if (signal.SignalType == "FleetCarrier")
                 {
                     carriers++;
+                } else if (signal.SignalType == "StationMegaShip" && signal.SignalName == "Stronghold Carrier")
+                {
+                    var systemEntry = await ctx.StarSystems.FindAsync(msg.message.StarSystem.Replace("'", "."));
+                    systemEntry!.has_stronghold_carrier = true;
+                    await ctx.SaveChangesAsync();
+                    Log.Debug($"{msg.message.StarSystem} now has a {signal.SignalName} (isnull={systemEntry==null})");
                 }
             }
 

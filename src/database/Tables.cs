@@ -40,6 +40,7 @@ namespace net.niceygy.eddatacollector.database
                 {
                     entity.ToTable("systems");
                     entity.HasKey(e => e.system_name);
+                    entity.Property<bool?>(e => e.has_stronghold_carrier).HasColumnName("has_stronghold_carrier");
                     entity.Property<string>("_state")
                         .HasColumnName("state");
                     entity.Property<string>("_shortcode")

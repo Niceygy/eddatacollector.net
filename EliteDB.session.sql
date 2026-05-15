@@ -1,14 +1,16 @@
-INSERT INTO systems (
-    system_name, shortcode, state, control_points, points_change
-)
-SELECT
-    system_name, shortcode, state, control_points, points_change
-FROM powerdata
-ON DUPLICATE KEY UPDATE
-    shortcode      = VALUES(shortcode),
-    state          = VALUES(state),
-    control_points = VALUES(control_points),
-    points_change  = VALUES(points_change);
+-- INSERT INTO systems (
+--     system_name, shortcode, state, control_points, points_change
+-- )
+-- SELECT
+--     system_name, shortcode, state, control_points, points_change
+-- FROM powerdata
+-- ON DUPLICATE KEY UPDATE
+--     shortcode      = VALUES(shortcode),
+--     state          = VALUES(state),
+--     control_points = VALUES(control_points),
+--     points_change  = VALUES(points_change);
+
+ALTER TABLE systems ADD COLUMN has_stronghold_carrier TINYINT(1);
 
 -- CREATE TABLE systems (
 --     system_name VARCHAR(50) NOT NULL PRIMARY KEY,
