@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Serilog;
 
@@ -5,6 +6,7 @@ namespace net.niceygy.eddatacollector.database.schemas
 {
     public class PowerData
     {
+        [Key]
         public required string system_name { get; set; }
         /*SystemStates.SystemState*/
         [NotMapped]
@@ -48,7 +50,7 @@ namespace net.niceygy.eddatacollector.database.schemas
         public float? control_points
         {
             get => _control_points;
-            set => _control_points = value ?? 0;
+            set => _control_points = (float?)value ?? 0;
         }
         private float _points_change { get; set; }
         public float? points_change

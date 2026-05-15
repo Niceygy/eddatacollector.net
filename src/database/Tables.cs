@@ -57,13 +57,24 @@ namespace net.niceygy.eddatacollector.database
                 .HasKey(s => s.timestamp);
 
             //powerdata
-            modelBuilder.Entity<PowerData>()
-                        .ToTable("powerdata")
-                        .HasKey(s => s.system_name);
-
-            // modelBuilder.Entity<FleetCarrier>()
-            //     .Property(s => s.system_name)
-            //     .HasKey("system_name");
+            // modelBuilder.Entity<PowerData>()
+            //             .ToTable("powerdata")
+            //             .HasKey(s => s.system_name);
+            modelBuilder.Entity<PowerData>(entity =>
+                {
+                    entity.ToTable("powerdata");
+                    entity.HasKey(e => e.system_name);
+                    entity.Property<string>("_state")
+                        .HasColumnName("state");
+                    entity.Property<string>("_shortcode")
+                        .HasColumnName("shortcode");
+                    entity.Ignore(e => e.state);
+                    entity.Ignore(e => e.shortcode);
+                    entity.Property(e => e.control_points)
+                        .HasColumnName("control_points");
+                    entity.Property(e => e.points_change)
+                        .HasColumnName("points_change");
+                });
         }
     }
 

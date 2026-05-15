@@ -27,13 +27,13 @@ namespace net.niceygy.eddatacollector.handlers
             await UpdateConflictData(msg.message, ctx);
 
             var entry = await ctx.PowerDatas.FindAsync(msg.message.StarSystem.Replace("'", "."));
-
             decimal journalControlPoints = 0;
             try
             {
                 if (msg.message.PowerplayConflictProgress != null/* || msg.message.PowerplayConflictProgress.Count > 1*/)
                 {
                     journalControlPoints = (decimal)msg.message.PowerplayStateControlProgress!;
+                    //^may throw, if so caught because no owning power
                 }
                 else if (msg.message.PowerplayConflictProgress?[0] != null)
                 {
