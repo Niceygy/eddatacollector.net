@@ -148,9 +148,9 @@ namespace net.niceygy.eddatacollector
                 "DATABASE_USER",
                 "DATABASE_PASSWD",
                 "LOG_LEVEL",
-                "FTP_USERNAME",
-                "FTP_PASSWORD",
-                "FTP_HOST"
+                // "FTP_USERNAME",
+                // "FTP_PASSWORD",
+                // "FTP_HOST"
             ];
 
             bool result = true;
@@ -178,11 +178,11 @@ namespace net.niceygy.eddatacollector
             return true;
         }
 
-        public static byte[]? DecompressZlib(byte[] compressed)
+        public static byte[]? DecompressZlib(byte[]? compressed)
         {
-            if (compressed.IsNullOrEmpty())
+            if (compressed == null)
             {
-                return null;
+                return [];
             }
             using var input = new MemoryStream(compressed);
             using var zlib = new ZLibStream(input, CompressionMode.Decompress);
