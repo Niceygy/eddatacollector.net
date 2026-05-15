@@ -37,7 +37,7 @@ namespace net.niceygy.eddatacollector.handlers
             if (entry != null)
             {
                 entry.is_anarchy = msg.message.SystemSecurity == "$GAlAXY_MAP_INFO_state_anarchy;";
-                _ = entry.frequency == null ? entry.frequency++ : entry.frequency = 1;
+                // _ = entry.frequency == null ? entry.frequency++ : entry.frequency = 1;
             }
             else
             {
@@ -45,10 +45,12 @@ namespace net.niceygy.eddatacollector.handlers
                 {
                     system_name = msg.message.StarSystem.Replace("'", "."),
                     is_anarchy = msg.message.SystemSecurity == "$GAlAXY_MAP_INFO_state_anarchy;",
-                    frequency = 1,
+                    // frequency = 1,
                     latitude = (float)msg.message.StarPos[0],
                     longitude = (float)msg.message.StarPos[1],
-                    height = (float)msg.message.StarPos[2]
+                    height = (float)msg.message.StarPos[2],
+                    state = SystemStates.SystemState.Unoccupied,
+                    shortcode = PowersInfo.Power.NONE
                 };
 
                 await ctx.StarSystems.AddAsync(newSystem);

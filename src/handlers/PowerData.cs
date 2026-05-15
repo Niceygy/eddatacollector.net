@@ -26,12 +26,13 @@ namespace net.niceygy.eddatacollector.handlers
             }
             await UpdateConflictData(msg.message, ctx);
 
-            var entry = await ctx.PowerDatas.FindAsync(msg.message.StarSystem.Replace("'", "."));
+            var entry = await ctx.StarSystems.FindAsync(msg.message.StarSystem.Replace("'", "."));
             decimal journalControlPoints = 0;
             try
             {
                 if (msg.message.PowerplayConflictProgress != null/* || msg.message.PowerplayConflictProgress.Count > 1*/)
                 {
+                    if (msg.message.PowerplayStateControlProgress== null) return;
                     journalControlPoints = (decimal)msg.message.PowerplayStateControlProgress!;
                     //^may throw, if so caught because no owning power
                 }
@@ -59,15 +60,19 @@ namespace net.niceygy.eddatacollector.handlers
             }
             else
             {
-                var newEntry = new database.schemas.PowerData
+                var newEntry = new database.schemas.StarSystem
                 {
+                    latitude = (float)msg.message.StarPos[0],
+                    longitude = (float)msg.message.StarPos[1],
+                    height = (float)msg.message.StarPos[2],
+                    is_anarchy = msg.message.SystemSecurity == "$GAlAXY_MAP_INFO_state_anarchy;",
                     shortcode = PowersInfo.PowerShortCodes[msg.message.ControllingPower!],
                     system_name = msg.message.StarSystem.Replace("'", "."),
                     control_points = (float)controlPoints,
                     state = msg.message.PowerplayState
                 };
 
-                await ctx.PowerDatas.AddAsync(newEntry);
+                await ctx.StarSystems.AddAsync(newEntry);
             }
 
             await ctx.SaveChangesAsync();

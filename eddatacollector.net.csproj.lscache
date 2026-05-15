@@ -69,6 +69,7 @@ src/
    Megaships.cs
    PowerData.cs
    StarSystem.cs
+   Systems.cs
    Uploaders.cs
   Tables.cs
  handlers/

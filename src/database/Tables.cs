@@ -1,35 +1,19 @@
 namespace net.niceygy.eddatacollector.database
 {
     using Microsoft.EntityFrameworkCore;
-
     using net.niceygy.eddatacollector.database.schemas;
-
-    /*
-    modelBuilder.Entity<YourNewEntity>()
-        .ToTable("your_table_name")
-        .HasKey(e => e.Id);  // replace Id with your primary key property
-
-    // Optional: Map specific column names if they differ from property names
-    modelBuilder.Entity<YourNewEntity>()
-        .Property(e => e.SomeProperty)
-        .HasColumnName("some_column_name");*/
-
     public class EdDbContext(DbContextOptions ctx) : DbContext(ctx)
     {
         public DbSet<StarSystem> StarSystems { get; set; }
         public DbSet<Megaship> Megaships { get; set; }
-        public DbSet<PowerData> PowerDatas { get; set; }
+        // public DbSet<PowerData> PowerDatas { get; set; }
         public DbSet<Conflict> Conflicts { get; set; }
         public DbSet<FleetCarrier> FleetCarriers { get; set; }
-        public DbSet<Uploaders> Uploaders { get; set; }
+        // public DbSet<Uploaders> Uploaders { get; set; }
+        // public DbSet<Systems> Systems_DBSet { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //star systems
-            modelBuilder.Entity<StarSystem>()
-                .ToTable("star_systems")
-                .HasKey(s => s.system_name);
-
             modelBuilder.Entity<FleetCarrier>()
                 .ToTable("FleetCarriers")
                 .HasKey(s => s.system_name);
@@ -52,17 +36,9 @@ namespace net.niceygy.eddatacollector.database
                 .ToTable("megaships")
                 .HasKey(s => s.name);
 
-            modelBuilder.Entity<Uploaders>()
-                .ToTable("EDAM")
-                .HasKey(s => s.timestamp);
-
-            //powerdata
-            // modelBuilder.Entity<PowerData>()
-            //             .ToTable("powerdata")
-            //             .HasKey(s => s.system_name);
-            modelBuilder.Entity<PowerData>(entity =>
+            modelBuilder.Entity<StarSystem>(entity =>
                 {
-                    entity.ToTable("powerdata");
+                    entity.ToTable("systems");
                     entity.HasKey(e => e.system_name);
                     entity.Property<string>("_state")
                         .HasColumnName("state");

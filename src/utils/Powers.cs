@@ -65,6 +65,11 @@ namespace net.niceygy.eddatacollector
             /// Zemina Torval
             /// </summary>
             ZMT,
+
+            /// <summary>
+            /// None, unoccupuied
+            /// </summary>
+            NONE
         }
 
         public static readonly Dictionary<string, Power> PowerShortCodes = new()
@@ -81,6 +86,7 @@ namespace net.niceygy.eddatacollector
             {"Pranav Antal", Power.PRA},
             {"Yuri Grom", Power.YRG},
             {"Zemina Torval", Power.ZMT},
+            {"", Power.NONE}
 
         };
 
