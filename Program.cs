@@ -185,6 +185,10 @@ namespace net.niceygy.eddatacollector
                 return [];
             }
             using var input = new MemoryStream(compressed);
+            if (input == null)
+            {
+                return [];
+            }
             using var zlib = new ZLibStream(input, CompressionMode.Decompress);
             using var output = new MemoryStream();
             zlib.CopyTo(output);
